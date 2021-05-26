@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -75,7 +76,10 @@ public class JavaFileObjectClass implements JavaFileObject, Closeable {
 
 	@Override
 	public InputStream openInputStream() throws IOException {
-		InputStream is = Files.newInputStream(Paths.get(uri));
+		String uriParts[] = uri.toString().split("!");
+		uriParts[0] = URLDecoder.decode(uriParts[0], "UTF-8");
+		URI uriModified = URI.create(String.join("!", uriParts));		
+		InputStream is = Files.newInputStream(Paths.get(uriModified));
 		this.openedStreams.add(is);
 		return is;
 	}
